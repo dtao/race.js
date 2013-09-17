@@ -17,8 +17,16 @@ var race = new Race({
   },
 
   inputs: [
-    ['You are my sunshine', 'shine'],
-    ['You are my sunshine', 'rainbow']
+    {
+      name: 'Positive case',
+      input: ['You are my sunshine', 'shine'],
+      size: 1
+    },
+    {
+      name: 'Negative case',
+      input: ['You are my sunshine', 'rainbow'],
+      size: 1
+    }
   ]
 });
 
