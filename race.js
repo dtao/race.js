@@ -14,66 +14,69 @@
   }
 
   Race.prototype.start = function(callbacks) {
-    var suite   = new Benchmark.Suite(),
-        impls   = this.implementations,
-        results = [];
+    var suite     = new Benchmark.Suite(),
+        impls     = this.implementations,
+        inputs    = this.inputs,
+        implCount = Object.keys(impls).length,
+        results   = {},
+        current   = {};
 
-    for (var key in impls) {
-      (function(name, impl) {
-        for (var i = 0; i < this.inputs.length; ++i) {
-          var input = this.inputs[i];
-          var benchmark = new Benchmark(name, function() {
-            fastApply(impl, input.input);
-          });
+    var resultCallback   = callbacks.result,
+        completeCallback = callbacks.complete;
 
-          benchmark.inputName = input.name;
-          benchmark.inputSize = input.size;
+    for (var i = 0; i < inputs.length; ++i) {
+      (function(input) {
+        for (var key in impls) {
+          (function(name, impl) {
+            var benchmark = new Benchmark(name, function() {
+              fastApply(impl, input.input);
+            });
 
-          suite.add(benchmark);
+            benchmark.inputName = input.name;
+            benchmark.inputSize = input.size;
+
+            suite.add(benchmark);
+          }(key, impls[key]));
         }
-      }).call(this, key, impls[key]);
+      }(inputs[i]));
     }
 
     suite.on('cycle', function(e) {
       var benchmark = e.target;
 
+      var inputDesc = {
+        name: benchmark.inputName,
+        size: benchmark.inputSize
+      };
+
       var result = {
         name:  benchmark.name,
-        input: benchmark.inputName + ' (' + benchmark.inputSize + ')',
+        input: inputDesc,
         perf:  benchmark.hz
       };
 
-      results.push(result);
+      current[benchmark.name] = result;
+      if (Object.keys(current).length === implCount) {
+        results[benchmark.inputName + ':' + benchmark.inputSize] = current;
 
-      if (typeof callbacks.result === 'function') {
-        callbacks.result(result);
+        if (typeof resultCallback === 'function') {
+          resultCallback({
+            input: inputDesc,
+            results: current
+          });
+        }
+
+        current = {};
+      }
+    });
+
+    suite.on('complete', function() {
+      if (typeof completeCallback === 'function') {
+        completeCallback(results);
       }
     });
 
     suite.run({ async: true });
-
-    suite.on('complete', function() {
-      if (typeof callbacks.complete === 'function') {
-        results.sort(function(x, y) {
-          if (y.name > x.name) {
-            return 1;
-          } else if (y.name < x.name) {
-            return -1;
-          }
-          return y.perf - x.perf;
-        });
-
-        callbacks.complete(results);
-      }
-    });
-  };
-
-  Race.numbers = function(count) {
-    var array = [];
-    while (array.length < count) {
-      array.push(array.length);
-    }
-    return array;
   };
 
   function fastApply(fn, args) {

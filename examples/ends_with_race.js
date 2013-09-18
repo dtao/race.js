@@ -30,4 +30,23 @@ var race = new Race({
   ]
 });
 
-race.start();
+race.start({
+  result: function(result) {
+    console.log(result.input.name + ' (' + result.input.size + '):');
+    for (var impl in result.results) {
+      (function(r) {
+        console.log(r.name + ' - ' + r.perf);
+        console.log('\n');
+      }(result.results[impl]));
+    }
+  },
+
+  complete: function(results) {
+    console.log('\n\n----- FINAL RESULTS -----\n\n');
+    for (var inputDesc in results) {
+      for (var impl in results[inputDesc]) {
+        console.log([inputDesc, results[inputDesc][impl].name, results[inputDesc][impl].perf].join(' - '));
+      }
+    }
+  }
+});
