@@ -1,5 +1,3 @@
-var Race = require('../race.js');
-
 var race = new Race({
   description: 'endsWith',
 
@@ -31,22 +29,45 @@ var race = new Race({
 });
 
 race.start({
-  result: function(result) {
-    console.log(result.input.name + ' (' + result.input.size + '):');
-    for (var impl in result.results) {
-      (function(r) {
-        console.log(r.name + ' - ' + r.perf);
-        console.log('\n');
-      }(result.results[impl]));
+  result: function(resultGroup) {
+    var resultsTable = document.getElementById('results-table');
+
+    // For the very first result, populate column headers.
+    if (resultsTable.children.length === 0) {
+      addColumnHeaders(resultsTable, Object.keys(resultGroup.results));
     }
+
+    addResultRow(resultsTable, resultGroup);
   },
 
   complete: function(results) {
-    console.log('\n\n----- FINAL RESULTS -----\n\n');
-    for (var inputDesc in results) {
-      for (var impl in results[inputDesc]) {
-        console.log([inputDesc, results[inputDesc][impl].name, results[inputDesc][impl].perf].join(' - '));
-      }
-    }
+    var loadingIcon = document.getElementById('loading-icon');
+    loadingIcon.parentNode.removeChild(loadingIcon);
   }
 });
+
+function addChild(element, childName, content) {
+  var child = document.createElement(childName);
+  element.appendChild(child);
+  if (content) {
+    child.textContent = content;
+  }
+  return child;
+}
+
+function addColumnHeaders(table, headers) {
+  var headerRow = addChild(table, 'TR');
+
+  addChild(headerRow, 'TH', 'Input');
+  for (var i = 0; i < headers.length; ++i) {
+    addChild(headerRow, 'TH', headers[i]);
+  }
+}
+
+function addResultRow(table, resultGroup) {
+  var resultRow = addChild(table, 'TR');
+  addChild(resultRow, 'TD', resultGroup.input.name);
+  for (var result in resultGroup.results) {
+    addChild(resultRow, 'TD', resultGroup.results[result].perf);
+  }
+}
