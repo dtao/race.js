@@ -19,18 +19,22 @@ h1, h2 {
 }
 
 h1 {
+  color: #789;
   font-size: 48pt;
   border-bottom: 1px solid black;
+  text-shadow: #def 4px 4px;
 }
 
 h1 small {
   color: #777;
   font-size: 32pt;
+  text-shadow: #ddd 2px 2px;
 }
 
 h2 {
   color: #555;
   font-size: 40pt;
+  text-shadow: #bbb 2px 2px;
 }
 
 h2:before {
