@@ -142,6 +142,8 @@
       return;
     }
 
+    var marathonComplete = callbacks.marathonComplete || function() {};
+
     callbacks = override(callbacks, 'complete', function(complete) {
       return function(results) {
         if (typeof complete === 'function') {
@@ -149,8 +151,12 @@
         }
 
         var nextRace = races[++raceIndex];
+
         if (nextRace) {
           nextRace.start(callbacks);
+
+        } else {
+          marathonComplete();
         }
       };
     });

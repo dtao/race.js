@@ -44,7 +44,7 @@ window.addEventListener('load', function() {
       addResultRow(resultsTable, resultGroup);
     },
 
-    complete: function(results) {
+    marathonComplete: function(results) {
       var loadingIcon = document.getElementById('loading-icon');
       loadingIcon.parentNode.removeChild(loadingIcon);
     }

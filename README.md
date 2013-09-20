@@ -132,7 +132,12 @@ marathon.add(new Race({
 
 marathon.start({
   /*
-   * All the same callbacks as you can pass to `Race.start()`.
+   * All the same callbacks as you can pass to `Race.start()`, PLUS...
    */
+  marathonComplete: function() {
+    /*
+     * Run when all races in the marathon have finished.
+     */
+  }
 });
 ```
