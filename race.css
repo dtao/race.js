@@ -1,7 +1,41 @@
+@import url(http://fonts.googleapis.com/css?family=Bangers);
+
+body {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 24pt;
+  font-weight: 300;
+}
+
 main {
   width: 100%;
   max-width: 960px;
   margin: auto;
+}
+
+h1 {
+  font-family: Bangers, cursive;
+  font-size: 48pt;
+  font-weight: normal;
+  border-bottom: 1px solid black;
+  padding: 0 10px;
+}
+
+h1 small {
+  color: #777;
+  font-size: 32pt;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+tr:first-child {
+  border-bottom: 1px solid black;
+}
+
+tr:nth-child(even) {
+  background-color: #def;
 }
 
 th, td {
@@ -10,6 +44,10 @@ th, td {
 }
 
 th:first-child, td:first-child {
-  padding-left: 0;
+  padding-left: 10px;
   text-align: left;
+}
+
+th:last-child, td:last-child {
+  padding-right: 10px;
 }
