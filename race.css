@@ -12,17 +12,30 @@ main {
   margin: auto;
 }
 
-h1 {
+h1, h2 {
   font-family: Bangers, cursive;
-  font-size: 48pt;
   font-weight: normal;
-  border-bottom: 1px solid black;
   padding: 0 10px;
+}
+
+h1 {
+  font-size: 48pt;
+  border-bottom: 1px solid black;
 }
 
 h1 small {
   color: #777;
   font-size: 32pt;
+}
+
+h2 {
+  color: #555;
+  font-size: 40pt;
+}
+
+h2:before {
+  content: ">> ";
+  font-size: 24pt;
 }
 
 table {

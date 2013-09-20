@@ -26,7 +26,7 @@ function mapResultsToObjects(results) {
   return objects;
 }
 
-var marathon = runExamples({
+runExamples({
   start: function(race) {
     lineBreak();
     console.log('Just started race: "' + race.description + '"');

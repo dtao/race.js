@@ -1,4 +1,6 @@
 window.addEventListener('load', function() {
+  var results = document.getElementById('results');
+
   function addChild(element, childName, content) {
     var child = document.createElement(childName);
     element.appendChild(child);
@@ -25,9 +27,14 @@ window.addEventListener('load', function() {
     }
   }
 
-  startExample({
+  runExamples({
+    start: function(race) {
+      addChild(results, 'H2', race.description);
+      addChild(results, 'TABLE');
+    },
+
     group: function(resultGroup) {
-      var resultsTable = document.getElementById('results-table');
+      var resultsTable = results.querySelector('table:last-of-type');
 
       // For the very first result, populate column headers.
       if (resultsTable.children.length === 0) {
