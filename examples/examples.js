@@ -32,6 +32,8 @@
     });
 
     race.start(callbacks);
+
+    return race;
   };
 
 }(typeof global !== 'undefined' ? global : this));

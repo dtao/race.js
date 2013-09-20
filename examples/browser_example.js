@@ -21,12 +21,12 @@ window.addEventListener('load', function() {
     var resultRow = addChild(table, 'TR');
     addChild(resultRow, 'TD', resultGroup.input.name);
     for (var result in resultGroup.results) {
-      addChild(resultRow, 'TD', resultGroup.results[result].perf.toFixed(3));
+      addChild(resultRow, 'TD', resultGroup.results[result].toFixed(3));
     }
   }
 
   startExample({
-    result: function(resultGroup) {
+    group: function(resultGroup) {
       var resultsTable = document.getElementById('results-table');
 
       // For the very first result, populate column headers.

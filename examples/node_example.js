@@ -1,38 +1,51 @@
-var Race        = require('../race.js'),
-    stringTable = require('string-table');
-
-global.Race = Race;
+global.Race     = require('../race.js');
+var stringTable = require('string-table');
 
 require('./examples.js');
 
-function mapResultsToObjects(results) {
-  var keys    = Object.keys(results),
-      objects = [];
+function lineBreak() {
+  console.log('');
+}
 
-  for (var i = 0; i < keys.length; ++i) {
-    objects.push(results[keys[i]]);
+function mapResultsToObjects(results) {
+  var objects = [];
+
+  for (var i = 0; i < results.length; ++i) {
+    (function(resultGroup) {
+      var object = { input: resultGroup.input.name };
+
+      for (var implName in resultGroup.results) {
+        object[implName] = resultGroup.results[implName];
+      }
+
+      objects.push(object);
+
+    }(results[i]));
   }
 
   return objects;
 }
 
-var runs = 0;
-
-startExample({
-  start: function(info) {
-    process.stdout.write('Running ' + info.input + ' - ' + info.impl + '...\n');
-    runs = 0;
+var race = startExample({
+  result: function(result) {
   },
 
-  cycle: function(info) {
-    process.stdout.write('\r');
-    process.stdout.write(info.input + ' - ' + info.impl + ': ' + (++runs));
-  },
-
-  result: function(resultGroup) {
+  group: function(resultGroup) {
+    console.log('  * Finished running tests for "' + resultGroup.input.name + '"');
   },
 
   complete: function(results) {
-    console.log(stringTable.create(mapResultsToObjects(results)));
+    lineBreak();
+    console.log('----- RESULTS -----');
+    lineBreak();
+
+    console.log(stringTable.create(mapResultsToObjects(results), {
+      capitalizeHeaders: true
+    }));
+
+    lineBreak();
   }
 });
+
+lineBreak();
+console.log('Just started race: "' + race.description + '"');
