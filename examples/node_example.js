@@ -3,8 +3,34 @@ var stringTable = require('string-table');
 
 require('./examples.js');
 
+function truncate(value) {
+  value = String(value);
+  if (value.length > 100) {
+    value = value.substring(0, 97) + '...';
+  }
+  return value;
+}
+
 function lineBreak() {
   console.log('');
+}
+
+function mapOutputMapToObjects(outputMap) {
+  var objects = [];
+
+  for (var implName in outputMap) {
+    (function(output) {
+
+      objects.push({
+        impl: implName,
+        label: output.label,
+        value: truncate(output.value)
+      });
+
+    }(outputMap[implName]));
+  }
+
+  return objects;
 }
 
 function mapResultsToObjects(results) {
@@ -30,6 +56,13 @@ runExamples({
   start: function(race) {
     lineBreak();
     console.log('Just started race: "' + race.description + '"');
+  },
+
+  mismatch: function(outputSet) {
+    lineBreak();
+    console.log('Implementations did not match for "' + outputSet.input.name + '":');
+    lineBreak();
+    console.log(stringTable.create(mapOutputMapToObjects(outputSet.getOutputMap())));
   },
 
   result: function(result) {

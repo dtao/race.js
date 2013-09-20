@@ -47,7 +47,21 @@ var sumRace = new Race({
       values: [Race.integers(1000)],
       size: 1000
     }
-  ]
+  ],
+
+  comparer: function(x, y) {
+    if (x.length !== y.length) {
+      return false;
+    }
+
+    for (var i = 0; i < x.length; ++i) {
+      if (x[i] !== y[i]) {
+        return false;
+      }
+    }
+
+    return true;
+  }
 });
 ```
 

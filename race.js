@@ -15,6 +15,7 @@
     this.description     = options.description;
     this.implementations = options.impls;
     this.inputs          = options.inputs;
+    this.comparer        = options.comparer || Race.compare;
   }
 
   /**
@@ -26,6 +27,75 @@
     this.name   = data.name;
     this.size   = data.size;
     this.values = data.values;
+  };
+
+  /**
+   * Represents the set of outputs produced by all implementations for a given input.
+   *
+   * @constructor
+   */
+  Race.OutputSet = function(input, comparer) {
+    this.input      = input;
+    this.comparer   = comparer;
+    this.outputs    = [];
+    this.outputTags = [];
+    this.outputMap  = {};
+    this.outputTag  = null;
+  };
+
+  Race.OutputSet.prototype.add = function(implName, output) {
+    var comparer   = this.comparer,
+        outputs    = this.outputs,
+        outputTags = this.outputTags,
+        outputMap  = this.outputMap;
+
+    // Say we've already seen this output 'C' here:
+    // [_, _, C, _]
+    //
+    // Then we will add another 'C' to the tag list:
+    // [_, _, C, _, C]
+    //
+    // Clear as mud? Good.
+    for (var i = 0; i < outputs.length; ++i) {
+      if (comparer(output, outputs[i])) {
+        outputTags.push(outputTags[i]);
+
+        outputMap[implName] = {
+          label: outputTags[i],
+          value: output
+        };
+
+        return outputTags[i];
+      }
+    }
+
+    outputs.push(output);
+    outputTags.push(this.nextOutputTag());
+
+    outputMap[implName] = {
+      label: this.outputTag,
+      value: output
+    };
+
+    return this.outputTag;
+  };
+
+  Race.OutputSet.prototype.consistent = function() {
+    return this.outputTag === 'A';
+  };
+
+  Race.OutputSet.prototype.getOutputMap = function() {
+    return this.outputMap;
+  };
+
+  Race.OutputSet.prototype.nextOutputTag = function() {
+    if (!this.outputTag) {
+      this.outputTag = 'A';
+    } else {
+      this.outputTag = String.fromCharCode(this.outputTag.charCodeAt(0) + 1);
+    }
+
+    return this.outputTag;
   };
 
   /**
@@ -56,25 +126,45 @@
     var suite            = new Benchmark.Suite(),
         impls            = this.implementations,
         inputs           = this.inputs,
+        comparer         = this.comparer,
         implCount        = Object.keys(impls).length,
         results          = [],
         currentResults   = {},
         startCallback    = callbacks.start    || function() {},
+        mismatchCallback = callbacks.mismatch || function() {},
         resultCallback   = callbacks.result   || function() {},
         groupCallback    = callbacks.group    || function() {},
         completeCallback = callbacks.complete || function() {};
 
     forEach(inputs, function(input) {
-      forIn(impls, function(implName, impl) {
-        var name = input.name + ' - ' + implName;
+      input = new Race.Input(input);
 
-        var benchmark = new Benchmark(name, function() {
+      var outputs    = new Race.OutputSet(input, comparer),
+          benchmarks = [];
+
+      forIn(impls, function(implName, impl) {
+        var output = outputs.add(implName, fastApply(impl, input.values));
+
+        var benchmark = new Benchmark(input.name + ' - ' + implName, function() {
           fastApply(impl, input.values);
         });
 
-        benchmark.impl  = implName;
-        benchmark.input = new Race.Input(input);
+        benchmark.impl   = implName;
+        benchmark.input  = input;
+        benchmark.output = output;
 
+        benchmarks.push(benchmark);
+      });
+
+      // If the outputs of all the implementations we just tested did not match,
+      // exist early and call the mismatch callback.
+      if (!outputs.consistent()) {
+        mismatchCallback(outputs);
+        return;
+      }
+
+      // Otherwise, add all the benchmarks we just created to the suite.
+      forEach(benchmarks, function(benchmark) {
         suite.add(benchmark);
       });
     });
@@ -102,6 +192,7 @@
           groupCallback(resultGroup);
         }());
 
+        outputs = new Race.OutputSet(comparer);
         currentResults = {};
       }
     });
@@ -203,6 +294,13 @@
     return result;
   };
 
+  /**
+   * The default comparison method used to verify outputs from different implementations.
+   */
+  Race.compare = function(x, y) {
+    return x === y;
+  };
+
   function forEach(collection, fn) {
     for (var i = 0; i < collection.length; ++i) {
       fn(collection[i]);
@@ -218,32 +316,25 @@
   function fastApply(fn, args) {
     switch (args.length) {
       case 0:
-        fn();
-        break;
+        return fn();
 
       case 1:
-        fn(args[0]);
-        break;
+        return fn(args[0]);
 
       case 2:
-        fn(args[0], args[1]);
-        break;
+        return fn(args[0], args[1]);
 
       case 3:
-        fn(args[0], args[1], args[2]);
-        break;
+        return fn(args[0], args[1], args[2]);
 
       case 4:
-        fn(args[0], args[1], args[2], args[3]);
-        break;
+        return fn(args[0], args[1], args[2], args[3]);
 
       case 5:
-        fn(args[0], args[1], args[2], args[3], args[4]);
-        break;
+        return fn(args[0], args[1], args[2], args[3], args[4]);
 
       default:
-        fn.apply(this, args);
-        break;
+        return fn.apply(this, args);
     }
   }
 
