@@ -23,7 +23,7 @@ window.addEventListener('load', function() {
     var resultRow = addChild(table, 'TR');
     addChild(resultRow, 'TD', resultGroup.input.name);
     for (var result in resultGroup.results) {
-      addChild(resultRow, 'TD', resultGroup.results[result].toFixed(3));
+      addChild(resultRow, 'TD', Race.addCommas(resultGroup.results[result].toFixed(3)));
     }
   }
 

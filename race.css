@@ -34,7 +34,12 @@ h2 {
 }
 
 h2:before {
-  content: ">> ";
+  content: "--- ";
+  font-size: 24pt;
+}
+
+h2:after {
+  content: " ---";
   font-size: 24pt;
 }
 

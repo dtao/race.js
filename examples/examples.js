@@ -1,26 +1,10 @@
 (function(env) {
 
-  function sumIterative(values) {
-    var sum = 0;
-    for (var i = 0; i < values.length; ++i) {
-      sum += values[i];
-    }
-    return sum;
-  }
-
-  function sumRecursive(values, i) {
-    i = i || 0;
-    if (i >= values.length) {
-      return 0;
-    }
-    return values[i] + sumRecursive(values, i + 1);
-  }
-
   env.runExamples = function(callbacks) {
     var marathon = new Race.Marathon();
 
     marathon.add(new Race({
-      description: 'endsWith',
+      description: 'Checking if a string ends with a suffix',
 
       impls: {
         'Using lastIndexOf': function(str, suffix) {
@@ -50,11 +34,24 @@
     }));
 
     marathon.add(new Race({
-      description: 'sum',
+      description: 'Summing all the values in an array',
 
       impls: {
-        'iterative': sumIterative,
-        'recursive': sumRecursive
+        'Iterative algorithm': function sumIterative(values) {
+          var sum = 0;
+          for (var i = 0; i < values.length; ++i) {
+            sum += values[i];
+          }
+          return sum;
+        },
+
+        'Recursive algorithm': function sumRecursive(values, i) {
+          i = i || 0;
+          if (i >= values.length) {
+            return 0;
+          }
+          return values[i] + sumRecursive(values, i + 1);
+        }
       },
 
       inputs: [

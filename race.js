@@ -158,12 +158,43 @@
     races[raceIndex].start(callbacks);
   };
 
-  Race.integers = function(count) {
+  /**
+   * Produces an array of integers from 0 to N.
+   */
+  Race.integers = function(N) {
     var integers = [];
-    while (integers.length < count) {
+    while (integers.length < N) {
       integers.push(integers.length);
     }
     return integers;
+  };
+
+  /**
+   * Formats a number w/ commas as the thousands separator.
+   *
+   * Note: This totally doesn't belong here, but whatever; it's convenient for now.
+   */
+  Race.addCommas = function(number) {
+    var parts  = String(number).split('.'),
+        number = parts.shift(),
+        whole  = [];
+
+    while (number.length > 3) {
+      whole.unshift(number.substring(number.length - 3));
+      number = number.substring(0, number.length - 3);
+    }
+
+    if (number.length > 0) {
+      whole.unshift(number);
+    }
+
+    var result = whole.join(',');
+
+    if (parts.length > 0) {
+      result += '.' + parts[0];
+    }
+
+    return result;
   };
 
   function forEach(collection, fn) {

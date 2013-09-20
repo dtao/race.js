@@ -15,7 +15,7 @@ function mapResultsToObjects(results) {
       var object = { input: resultGroup.input.name };
 
       for (var implName in resultGroup.results) {
-        object[implName] = resultGroup.results[implName];
+        object[implName] = Race.addCommas(resultGroup.results[implName].toFixed(3));
       }
 
       objects.push(object);
