@@ -20,12 +20,12 @@
       inputs: [
         {
           name: 'Positive case',
-          input: ['You are my sunshine', 'shine'],
+          values: ['You are my sunshine', 'shine'],
           size: 1
         },
         {
           name: 'Negative case',
-          input: ['You are my sunshine', 'rainbow'],
+          values: ['You are my sunshine', 'rainbow'],
           size: 1
         }
       ]

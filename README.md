@@ -31,20 +31,20 @@ var sumRace = new Race({
 
   inputs: [
     {
-      name: 'Small input',
-      input: [Race.integers(10)],
+      name: 'Small array',
+      values: [Race.integers(10)],
       size: 10
     },
 
     {
-      name: 'Medium input',
-      input: [Race.integers(100)],
+      name: 'Medium array',
+      values: [Race.integers(100)],
       size: 100
     },
 
     {
-      name: 'Large input',
-      input: [Race.integers(1000)],
+      name: 'Large array',
+      values: [Race.integers(1000)],
       size: 1000
     }
   ]
@@ -62,7 +62,7 @@ sumRace.start({
      * {
      *   impl: 'simple',
      *   input: { name: 'Small input', size: 10 },
-     *   perf: { 1000000.0 }
+     *   perf: 1000000.0
      * }
      */
   },
