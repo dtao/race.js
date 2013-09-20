@@ -15,7 +15,7 @@ function mapResultsToObjects(results) {
       var object = { input: resultGroup.input.name };
 
       for (var implName in resultGroup.results) {
-        object[implName] = Race.addCommas(resultGroup.results[implName].toFixed(3));
+        object[implName] = resultGroup.results[implName];
       }
 
       objects.push(object);
@@ -45,7 +45,12 @@ runExamples({
     lineBreak();
 
     console.log(stringTable.create(mapResultsToObjects(results), {
-      capitalizeHeaders: true
+      capitalizeHeaders: true,
+      typeFormatters: {
+        number: function(value) {
+          return Race.addCommas(value.toFixed(3))
+        }
+      }
     }));
 
     lineBreak();
