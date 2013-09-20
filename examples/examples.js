@@ -73,6 +73,50 @@
       ]
     }));
 
+    marathon.add(new Race({
+      description: 'Repeating a character N times',
+
+      impls: {
+        'Appending to the empty string with +=': function(char, count) {
+          var str = '';
+          while (str.length < count) {
+            str += char;
+          }
+          return str;
+        },
+
+        'Doubling the string as many times as possible': function(char, count) {
+          var str = char;
+          while (str.length <= (count / 2)) {
+            str += str;
+          }
+          if (str.length < count) {
+            str += str.substring(0, str.length - count);
+          }
+
+          return str;
+        }
+      },
+
+      inputs: [
+        {
+          name: 'Small string',
+          values: ['a', 10],
+          size: 10
+        },
+        {
+          name: 'Medium string',
+          values: ['a', 100],
+          size: 100
+        },
+        {
+          name: 'Large string',
+          values: ['a', 1000],
+          size: 1000
+        }
+      ]
+    }));
+
     marathon.start(callbacks);
 
     return marathon;
