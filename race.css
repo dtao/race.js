@@ -1,0 +1,15 @@
+main {
+  width: 100%;
+  max-width: 960px;
+  margin: auto;
+}
+
+th, td {
+  padding: 0.5ex 1em;
+  text-align: right;
+}
+
+th:first-child, td:first-child {
+  padding-left: 0;
+  text-align: left;
+}

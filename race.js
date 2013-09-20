@@ -3,6 +3,8 @@
     Benchmark = require('benchmark');
   }
 
+  Benchmark.options.maxTime = 0.5;
+
   /**
    * Races multiple implementations of some functionality, ensures they all return the same result,
    * and ranks them by performance.
@@ -21,15 +23,37 @@
         results   = {},
         current   = {};
 
-    var resultCallback   = callbacks.result,
+    var startCallback    = callbacks.start,
+        cycleCallback    = callbacks.cycle,
+        resultCallback   = callbacks.result,
         completeCallback = callbacks.complete;
 
     for (var i = 0; i < inputs.length; ++i) {
       (function(input) {
         for (var key in impls) {
           (function(name, impl) {
-            var benchmark = new Benchmark(name, function() {
+            var fn = function() {
               fastApply(impl, input.input);
+            };
+
+            var benchmark = new Benchmark(name, fn, {
+              onStart: function() {
+                if (typeof startCallback === 'function') {
+                  startCallback({
+                    input: input.name,
+                    impl: name
+                  });
+                }
+              },
+
+              onCycle: function() {
+                if (typeof cycleCallback === 'function') {
+                  cycleCallback({
+                    input: input.name,
+                    impl: name
+                  });
+                }
+              },
             });
 
             benchmark.inputName = input.name;
