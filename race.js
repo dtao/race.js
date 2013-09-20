@@ -22,10 +22,10 @@
    *
    * @constructor
    */
-  Race.Input = function(name, size, values) {
-    this.name   = name;
-    this.size   = size;
-    this.values = values;
+  Race.Input = function(data) {
+    this.name   = data.name;
+    this.size   = data.size;
+    this.values = data.values;
   };
 
   /**
@@ -49,6 +49,9 @@
     this.results = data.results;
   };
 
+  /**
+   * Start your engines!
+   */
   Race.prototype.start = function(callbacks) {
     var suite            = new Benchmark.Suite(),
         impls            = this.implementations,
@@ -56,6 +59,7 @@
         implCount        = Object.keys(impls).length,
         results          = [],
         currentResults   = {},
+        startCallback    = callbacks.start    || function() {},
         resultCallback   = callbacks.result   || function() {},
         groupCallback    = callbacks.group    || function() {},
         completeCallback = callbacks.complete || function() {};
@@ -69,7 +73,7 @@
         });
 
         benchmark.impl  = implName;
-        benchmark.input = input;
+        benchmark.input = new Race.Input(input);
 
         suite.add(benchmark);
       });
@@ -107,6 +111,59 @@
     });
 
     suite.run({ async: true });
+
+    startCallback(this);
+  };
+
+  /**
+   * Runs multiple races consecutively.
+   *
+   * @constructor
+   */
+  Race.Marathon = function() {
+    this.races = [];
+  };
+
+  /**
+   * Adds a race to the marathon.
+   */
+  Race.Marathon.prototype.add = function(race) {
+    this.races.push(race);
+  };
+
+  /**
+   * Starts the first race in the marathon, which will be followed by the next, and so on.
+   */
+  Race.Marathon.prototype.start = function(callbacks) {
+    var races     = this.races,
+        raceIndex = 0;
+
+    if (races.length === 0) {
+      return;
+    }
+
+    callbacks = override(callbacks, 'complete', function(complete) {
+      return function(results) {
+        if (typeof complete === 'function') {
+          complete(results);
+        }
+
+        var nextRace = races[++raceIndex];
+        if (nextRace) {
+          nextRace.start(callbacks);
+        }
+      };
+    });
+
+    races[raceIndex].start(callbacks);
+  };
+
+  Race.integers = function(count) {
+    var integers = [];
+    while (integers.length < count) {
+      integers.push(integers.length);
+    }
+    return integers;
   };
 
   function forEach(collection, fn) {
@@ -151,6 +208,22 @@
         fn.apply(this, args);
         break;
     }
+  }
+
+  function override(object, propertyName, replacement) {
+    var overridden = clone(object);
+    overridden[propertyName] = replacement(object[propertyName]);
+    return overridden;
+  }
+
+  function clone(object) {
+    var cloned = {};
+    for (var property in object) {
+      if (object.hasOwnProperty(property)) {
+        cloned[property] = object[property];
+      }
+    }
+    return cloned;
   }
 
   if (typeof module !== 'undefined') {

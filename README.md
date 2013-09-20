@@ -55,6 +55,12 @@ Then we begin the race and pass in some callbacks:
 
 ```javascript
 sumRace.start({
+  start: function(race) {
+    /*
+     * Here race will be a Race object like the one described above, with description, impls, etc.
+     */
+  },
+
   result: function(result) {
     /*
      * Here result will be a Race.Result object like this:
@@ -104,5 +110,29 @@ sumRace.start({
      * ]
      */
   }
+});
+```
+
+You can run multiple races in sequence using the `Race.Marathon` object:
+
+```javascript
+var marathon = new Race.Marathon();
+
+marathon.add(new Race({
+  /*
+   * All the properties explained above.
+   */
+}));
+
+marathon.add(new Race({
+  /*
+   * Add as many races as you like.
+   */
+}));
+
+marathon.start({
+  /*
+   * All the same callbacks as you can pass to `Race.start()`.
+   */
 });
 ```

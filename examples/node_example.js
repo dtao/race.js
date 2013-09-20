@@ -26,7 +26,12 @@ function mapResultsToObjects(results) {
   return objects;
 }
 
-var race = startExample({
+var marathon = runExamples({
+  start: function(race) {
+    lineBreak();
+    console.log('Just started race: "' + race.description + '"');
+  },
+
   result: function(result) {
   },
 
@@ -46,6 +51,3 @@ var race = startExample({
     lineBreak();
   }
 });
-
-lineBreak();
-console.log('Just started race: "' + race.description + '"');
