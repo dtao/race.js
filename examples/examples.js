@@ -1,5 +1,7 @@
 (function(env) {
 
+  Benchmark.options.maxTime = 0.5;
+
   env.runExamples = function(callbacks) {
     var marathon = new Race.Marathon();
 

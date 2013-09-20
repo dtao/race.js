@@ -1,9 +1,7 @@
 (function(root) {
   if (typeof Benchmark === 'undefined' && typeof require === 'function') {
-    Benchmark = require('benchmark');
+    Benchmark = root.Benchmark = require('benchmark');
   }
-
-  Benchmark.options.maxTime = 0.5;
 
   /**
    * Races multiple implementations of some functionality, ensures they all return the same result,
