@@ -1,0 +1,16 @@
+{
+  "name": "race.js",
+  "repo": "dtao/race.js",
+  "description": "Pit JavaScript libraries against each other",
+  "version": "0.1.0",
+  "keywords": [
+    "performance"
+  ],
+  "main": "race.js",
+  "scripts": ["race.js"],
+  "development": {
+    "dtao/HighTables": ">= 0.1.0"
+  },
+  "license": "MIT",
+  "demo": "http://danieltao.com/race.js"
+}
