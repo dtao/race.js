@@ -44,6 +44,8 @@ function mapResultsToObjects(results) {
         object[implName] = resultGroup.results[implName];
       }
 
+      object.winner = resultGroup.winner;
+
       objects.push(object);
 
     }(results[i]));

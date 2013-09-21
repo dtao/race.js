@@ -96,7 +96,8 @@ sumRace.start({
      *   results: {
      *     'simple': 1000000.0,
      *     'fast': 1500000.0
-     *   }
+     *   },
+     *   winner: 'fast'
      * }
      */
   },

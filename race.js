@@ -17,6 +17,93 @@
   }
 
   /**
+   * Start your engines!
+   */
+  Race.prototype.start = function(callbacks) {
+    var suite            = new Benchmark.Suite(),
+        impls            = this.implementations,
+        inputs           = this.inputs,
+        comparer         = this.comparer,
+        implCount        = Object.keys(impls).length,
+        results          = [],
+        currentResults   = {},
+        startCallback    = callbacks.start    || function() {},
+        mismatchCallback = callbacks.mismatch || function() {},
+        resultCallback   = callbacks.result   || function() {},
+        groupCallback    = callbacks.group    || function() {},
+        completeCallback = callbacks.complete || function() {};
+
+    forEach(inputs, function(input) {
+      input = new Race.Input(input);
+
+      var outputs    = new Race.OutputSet(input, comparer),
+          benchmarks = [];
+
+      forIn(impls, function(implName, impl) {
+        var output = outputs.add(implName, fastApply(impl, input.values));
+
+        var benchmark = new Benchmark(input.name + ' - ' + implName, function() {
+          fastApply(impl, input.values);
+        });
+
+        benchmark.impl   = implName;
+        benchmark.input  = input;
+        benchmark.output = output;
+
+        benchmarks.push(benchmark);
+      });
+
+      // If the outputs of all the implementations we just tested did not match,
+      // exist early and call the mismatch callback.
+      if (!outputs.consistent()) {
+        mismatchCallback(outputs);
+        return;
+      }
+
+      // Otherwise, add all the benchmarks we just created to the suite.
+      forEach(benchmarks, function(benchmark) {
+        suite.add(benchmark);
+      });
+    });
+
+    suite.on('cycle', function(e) {
+      var benchmark = e.target;
+
+      var result = new Race.Result({
+        impl:  benchmark.impl,
+        input: benchmark.input,
+        perf:  benchmark.hz
+      });
+
+      currentResults[benchmark.impl] = result.perf;
+      resultCallback(result);
+
+      if (Object.keys(currentResults).length === implCount) {
+        (function() {
+          var resultGroup = new Race.ResultGroup({
+            input: benchmark.input,
+            results: currentResults
+          });
+
+          results.push(resultGroup);
+          groupCallback(resultGroup);
+        }());
+
+        outputs = new Race.OutputSet(comparer);
+        currentResults = {};
+      }
+    });
+
+    suite.on('complete', function() {
+      completeCallback(results);
+    });
+
+    suite.run({ async: true });
+
+    startCallback(this);
+  };
+
+  /**
    * Represents an input that will be passed to multiple implementations in a Race.
    *
    * @constructor
@@ -115,93 +202,21 @@
   Race.ResultGroup = function(data) {
     this.input   = data.input;
     this.results = data.results;
+    this.winner  = this.determineWinner();
   };
 
-  /**
-   * Start your engines!
-   */
-  Race.prototype.start = function(callbacks) {
-    var suite            = new Benchmark.Suite(),
-        impls            = this.implementations,
-        inputs           = this.inputs,
-        comparer         = this.comparer,
-        implCount        = Object.keys(impls).length,
-        results          = [],
-        currentResults   = {},
-        startCallback    = callbacks.start    || function() {},
-        mismatchCallback = callbacks.mismatch || function() {},
-        resultCallback   = callbacks.result   || function() {},
-        groupCallback    = callbacks.group    || function() {},
-        completeCallback = callbacks.complete || function() {};
+  Race.ResultGroup.prototype.determineWinner = function() {
+    var winner      = null,
+        winningPerf = 0;
 
-    forEach(inputs, function(input) {
-      input = new Race.Input(input);
-
-      var outputs    = new Race.OutputSet(input, comparer),
-          benchmarks = [];
-
-      forIn(impls, function(implName, impl) {
-        var output = outputs.add(implName, fastApply(impl, input.values));
-
-        var benchmark = new Benchmark(input.name + ' - ' + implName, function() {
-          fastApply(impl, input.values);
-        });
-
-        benchmark.impl   = implName;
-        benchmark.input  = input;
-        benchmark.output = output;
-
-        benchmarks.push(benchmark);
-      });
-
-      // If the outputs of all the implementations we just tested did not match,
-      // exist early and call the mismatch callback.
-      if (!outputs.consistent()) {
-        mismatchCallback(outputs);
-        return;
-      }
-
-      // Otherwise, add all the benchmarks we just created to the suite.
-      forEach(benchmarks, function(benchmark) {
-        suite.add(benchmark);
-      });
-    });
-
-    suite.on('cycle', function(e) {
-      var benchmark = e.target;
-
-      var result = new Race.Result({
-        impl:  benchmark.impl,
-        input: benchmark.input,
-        perf:  benchmark.hz
-      });
-
-      currentResults[benchmark.impl] = result.perf;
-      resultCallback(result);
-
-      if (Object.keys(currentResults).length === implCount) {
-        (function() {
-          var resultGroup = new Race.ResultGroup({
-            input: benchmark.input,
-            results: currentResults
-          });
-
-          results.push(resultGroup);
-          groupCallback(resultGroup);
-        }());
-
-        outputs = new Race.OutputSet(comparer);
-        currentResults = {};
+    forIn(this.results, function(impl, perf) {
+      if (perf > winningPerf) {
+        winner = impl;
+        winningPerf = perf;
       }
     });
 
-    suite.on('complete', function() {
-      completeCallback(results);
-    });
-
-    suite.run({ async: true });
-
-    startCallback(this);
+    return winner;
   };
 
   /**
@@ -224,8 +239,9 @@
    * Starts the first race in the marathon, which will be followed by the next, and so on.
    */
   Race.Marathon.prototype.start = function(callbacks) {
-    var races     = this.races,
-        raceIndex = 0;
+    var races      = this.races,
+        allResults = [],
+        raceIndex  = 0;
 
     if (races.length === 0) {
       return;
@@ -235,6 +251,8 @@
 
     callbacks = override(callbacks, 'complete', function(complete) {
       return function(results) {
+        allResults = allResults.concat(results);
+
         if (typeof complete === 'function') {
           complete(results);
         }
@@ -245,7 +263,7 @@
           nextRace.start(callbacks);
 
         } else {
-          marathonComplete();
+          marathonComplete(allResults);
         }
       };
     });
