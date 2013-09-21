@@ -1,7 +1,7 @@
 RACE!!!11
 =========
 
-**Note: What follows is currently a lie. I am currently practicing [Readme Driven Development](http://tom.preston-werner.com/2010/08/23/readme-driven-development.html); i.e., I am writing this out before having actually implemented it. This is to help me work through how exactly I want the library to work. When it's implemented for real, I will (obviously) erase this message.**
+**Note: What follows is currently a lie. I am practicing [Readme Driven Development](http://tom.preston-werner.com/2010/08/23/readme-driven-development.html); i.e., I am writing this out before having actually implemented it. This is to help me work through how exactly I want the library to work. When it's implemented for real, I will (obviously) erase this message.**
 
 Purpose
 -------
