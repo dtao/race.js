@@ -207,16 +207,23 @@
 
   Race.ResultGroup.prototype.determineWinner = function() {
     var winner      = null,
-        winningPerf = 0;
+        winningPerf = 0,
+        runnerUp    = 0;
 
     forIn(this.results, function(impl, perf) {
       if (perf > winningPerf) {
         winner = impl;
+        runnerUp = winningPerf;
         winningPerf = perf;
+      } else if (perf > runnerUp) {
+        runnerUp = perf;
       }
     });
 
-    return winner;
+    return {
+      impl: winner,
+      margin: (winningPerf - runnerUp) / runnerUp
+    };
   };
 
   /**

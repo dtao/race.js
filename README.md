@@ -97,7 +97,10 @@ sumRace.start({
      *     'simple': 1000000.0,
      *     'fast': 1500000.0
      *   },
-     *   winner: 'fast'
+     *   winner: {
+     *     impl: 'fast',
+     *     margin: 0.5 // meaning 50% faster than second place
+     *   }
      * }
      */
   },
