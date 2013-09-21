@@ -1,3 +1,5 @@
+Benchmark.options.maxTime = 0.5;
+
 window.addEventListener('load', function() {
   var results = document.getElementById('results');
 
@@ -23,7 +25,10 @@ window.addEventListener('load', function() {
     var resultRow = addChild(table, 'TR');
     addChild(resultRow, 'TD', resultGroup.input.name);
     for (var result in resultGroup.results) {
-      addChild(resultRow, 'TD', Race.addCommas(resultGroup.results[result].toFixed(3)));
+      var cell = addChild(resultRow, 'TD', Race.addCommas(resultGroup.results[result].toFixed(3)));
+      if (result === resultGroup.winner.impl) {
+        cell.className = 'winner';
+      }
     }
   }
 
@@ -47,6 +52,10 @@ window.addEventListener('load', function() {
       }
 
       addResultRow(resultsTable, resultGroup);
+    },
+
+    mismatch: function() {
+
     },
 
     complete: function() {

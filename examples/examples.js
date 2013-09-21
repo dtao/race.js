@@ -91,7 +91,7 @@
             str += str;
           }
           if (str.length < count) {
-            str += str.substring(0, str.length - count);
+            str += str.substring(0, count - str.length);
           }
 
           return str;

@@ -73,3 +73,8 @@ th:first-child, td:first-child {
 th:last-child, td:last-child {
   padding-right: 10px;
 }
+
+td.winner {
+  color: #080;
+  font-weight: bold;
+}
