@@ -296,7 +296,28 @@
    * The default comparison method used to verify outputs from different implementations.
    */
   Race.compare = function(x, y) {
-    return x === y;
+    if (typeof x !== typeof y) {
+      return false;
+    }
+
+    switch (typeof x) {
+      case 'number':
+      case 'boolean':
+      case 'string':
+        return x === y;
+
+      default:
+        if (x instanceof Array) {
+          return compareArrays(x, y);
+        }
+
+        if (y instanceof Array) {
+          // This would mean that y is an array but x isn't.
+          return false;
+        }
+
+        return compareObjects(x, y);
+    }
   };
 
   function forEach(collection, fn) {
@@ -334,6 +355,34 @@
       default:
         return fn.apply(this, args);
     }
+  }
+
+  function compareArrays(arr1, arr2) {
+    if (arr1.length !== arr2.length) {
+      return false;
+    }
+
+    for (var i = 0; i < arr1.length; ++i) {
+      if (arr1[i] !== arr2[i]) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  function compareObjects(obj1, obj2) {
+    if (Object.keys(obj1).length !== Object.keys(obj2).length) {
+      return false;
+    }
+
+    for (var key in obj1) {
+      if (obj1[key] !== obj2[key]) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   function override(object, propertyName, replacement) {
