@@ -304,6 +304,7 @@
       case 'number':
       case 'boolean':
       case 'string':
+      case 'function':
         return x === y;
 
       default:
@@ -312,7 +313,16 @@
         }
 
         if (y instanceof Array) {
-          // This would mean that y is an array but x isn't.
+          // y is an array and x isn't.
+          return false;
+        }
+
+        if (x instanceof Date) {
+          return compareDates(x, y);
+        }
+
+        if (y instanceof Date) {
+          // y is a date and x isn't.
           return false;
         }
 
@@ -358,6 +368,10 @@
   }
 
   function compareArrays(arr1, arr2) {
+    if (!(arr2 instanceof Array)) {
+      return false;
+    }
+
     if (arr1.length !== arr2.length) {
       return false;
     }
@@ -369,6 +383,14 @@
     }
 
     return true;
+  }
+
+  function compareDates(date1, date2) {
+    if (!(date2 instanceof Date)) {
+      return false;
+    }
+
+    return date1.getTime() === date2.getTime();
   }
 
   function compareObjects(obj1, obj2) {
