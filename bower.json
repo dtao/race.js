@@ -1,7 +1,7 @@
 {
   "name": "race.js",
   "main": "race.js",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "http://danieltao.com/race.js",
   "authors": [
     "Dan Tao <daniel.tao@gmail.com>"
