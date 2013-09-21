@@ -27,10 +27,15 @@ window.addEventListener('load', function() {
     }
   }
 
+  // Just a little counter to give each table a unique ID.
+  var tableId = 1;
+
   runExamples({
     start: function(race) {
       addChild(results, 'H2', race.description);
-      addChild(results, 'TABLE');
+
+      var table = addChild(results, 'TABLE');
+      table.id = 'table-' + (tableId++);
     },
 
     group: function(resultGroup) {
@@ -42,6 +47,17 @@ window.addEventListener('load', function() {
       }
 
       addResultRow(resultsTable, resultGroup);
+    },
+
+    complete: function() {
+      var resultsTable = results.querySelector('table:last-of-type');
+
+      var chartContainer = addChild(results, 'DIV');
+      chartContainer.setAttribute('data-source', '#' + resultsTable.id);
+      chartContainer.setAttribute('data-transpose', 'true');
+      chartContainer.className = 'column-chart';
+
+      HighTables.renderChart(chartContainer);
     },
 
     marathonComplete: function(results) {

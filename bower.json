@@ -1,0 +1,26 @@
+{
+  "name": "race.js",
+  "main": "race.js",
+  "version": "0.1.0",
+  "homepage": "http://danieltao.com/race.js",
+  "authors": [
+    "Dan Tao <daniel.tao@gmail.com>"
+  ],
+  "description": "Pit JavaScript libraries against each other",
+  "keywords": [
+    "performance"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "examples"
+  ],
+  "dependencies": {
+    "benchmark": ">= 1.0.0"
+  },
+  "devDependencies": {
+    "HighTables": ">= 0.1.0"
+  }
+}
