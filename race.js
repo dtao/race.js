@@ -377,7 +377,7 @@
     }
 
     for (var i = 0; i < arr1.length; ++i) {
-      if (arr1[i] !== arr2[i]) {
+      if (!Race.compare(arr1[i], arr2[i])) {
         return false;
       }
     }
@@ -399,7 +399,7 @@
     }
 
     for (var key in obj1) {
-      if (obj1[key] !== obj2[key]) {
+      if (!Race.compare(obj1[key], obj2[key])) {
         return false;
       }
     }

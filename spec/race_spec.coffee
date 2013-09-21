@@ -21,9 +21,34 @@ describe 'Race', ->
         expect(Race.compare(1, 2)).toBe(false)
 
     describe 'for arrays', ->
-      it 'performs a shallow element-wise comparison', ->
+      it 'performs an element-wise comparison', ->
         expect(Race.compare([1, 2], [1, 2])).toBe(true)
         expect(Race.compare([1, 2], [1, 3])).toBe(false)
+
+      it 'works for nested arrays of arrays', ->
+        expect(Race.compare([[1, 2]], [[1, 2]])).toBe(true)
+        expect(Race.compare([[1, 2]], [[1, 3]])).toBe(false)
+
+    describe 'for objects', ->
+      it 'performs a key/value pair-wise comparison', ->
+        expect(Race.compare({ foo: 'bar' }, { foo: 'bar' })).toBe(true)
+        expect(Race.compare({ foo: 'bar' }, { foo: 'baz' })).toBe(false)
+
+      it 'works recursively for objects within objects', ->
+        obj1 =
+          parent:
+            child: 'foo'
+
+        obj2 =
+          parent:
+            child: 'foo'
+
+        obj3 =
+          parent:
+            child: 'bar'
+
+        expect(Race.compare(obj1, obj2)).toBe(true)
+        expect(Race.compare(obj1, obj3)).toBe(false)
 
     describe 'for dates', ->
       moment = new Date().getTime()
