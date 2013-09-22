@@ -10,6 +10,10 @@
   },
   "main": "race.js",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dtao/race.js.git"
+  },
   "dependencies": {
     "benchmark": "1.0.0",
     "string-table": ">= 0.1.2"
