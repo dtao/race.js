@@ -56,30 +56,14 @@
         }
       },
 
-      inputs: [
-        {
-          name: 'Small array',
-          values: [Race.integers(10)],
-          size: 10
-        },
-        {
-          name: 'Medium array',
-          values: [Race.integers(100)],
-          size: 100
-        },
-        {
-          name: 'Large array',
-          values: [Race.integers(1000)],
-          size: 1000
-        }
-      ]
+      inputs: Race.inputs.arraysOfIntegers([10, 100, 1000])
     }));
 
     marathon.add(new Race({
       description: 'Repeating a character N times',
 
       impls: {
-        'Appending to the empty string with +=': function(char, count) {
+        'Using str += char': function(char, count) {
           var str = '';
           while (str.length < count) {
             str += char;
@@ -87,7 +71,7 @@
           return str;
         },
 
-        'Doubling the string as many times as possible': function(char, count) {
+        'Using str += str': function(char, count) {
           var str = char;
           while (str.length <= (count / 2)) {
             str += str;
@@ -117,6 +101,43 @@
           size: 1000
         }
       ]
+    }));
+
+    marathon.add(new Race({
+      description: 'Counting the words in a string',
+
+      impls: {
+        'Using String.split': function(str) {
+          return str.split(' ').length;
+        },
+
+        'Using String.indexOf in a loop': function(str) {
+          var start = 0,
+              count = 1;
+
+          var wordMark = str.indexOf(' ', start);
+          while (wordMark !== -1) {
+            ++count;
+            start = wordMark + 1;
+            wordMark = str.indexOf(' ', start);
+          }
+
+          return count;
+        },
+
+        'Using /\\b\\w/.exec in a loop': function(str) {
+          var wordBreak = /\b\w/g,
+              count     = 0;
+
+          while (m = wordBreak.exec(str)) {
+            ++count;
+          }
+
+          return count;
+        }
+      },
+
+      inputs: Race.inputs.strings([10, 100, 1000])
     }));
 
     marathon.start(callbacks);

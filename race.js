@@ -284,45 +284,173 @@
     races[raceIndex].start(callbacks);
   };
 
-  /**
-   * Produces an array of N integers, starting from a given value (default: 0).
-   */
-  Race.integers = function(N, start) {
-    start = start || 0;
+  Race.inputs = {
+    /**
+     * Produces an array of N integers, starting from a given value (default: 0).
+     */
+    integers: function(N, start) {
+      start = numberOrDefault(start, 0);
 
-    var integers = [];
-    for (var i = 0; i < N; ++i) {
-      integers.push(start + i);
+      var integers = [];
+      for (var i = 0; i < N; ++i) {
+        integers.push(start + i);
+      }
+      return integers;
+    },
+
+    /**
+     * Produces a random number between min and max (defaults: 0 and 100).
+     */
+    randomInt: function(min, max) {
+      min = numberOrDefault(min, 0);
+      max = numberOrDefault(max, 100);
+
+      return Math.floor(min + (Math.random() * (max - min + 1)));
+    },
+
+    /**
+     * Produces an array of N random integers between min and max (defaults: 0 and 100).
+     */
+    randomIntegers: function(N, min, max) {
+      var randomInt = Race.inputs.randomInt,
+          integers  = [];
+      while (integers.length < N) {
+        integers.push(randomInt(min, max));
+      };
+      return integers;
+    },
+
+    /**
+     * Produces a random alphabetic character.
+     */
+    randomLetter: function() {
+      var charCodeRange = [
+        'a'.charCodeAt(0),
+        'z'.charCodeAt(0)
+      ];
+
+      return String.fromCharCode(Race.inputs.randomInt(charCodeRange[0], charCodeRange[1] + 1));
+    },
+
+    /**
+     * Produces a random word of length len (default: 10).
+     */
+    randomWord: function(len) {
+      len = numberOrDefault(len, 10);
+
+      var randomLetter = Race.inputs.randomLetter,
+          word         = '';
+      while (word.length < len) {
+        word += randomLetter();
+      }
+      return word;
+    },
+
+    /**
+     * Produces an array of N random words w/ length between minLength and maxLength
+     * (defaults: 3 and 10).
+     */
+    randomWords: function(N, minLength, maxLength) {
+      minLength = numberOrDefault(minLength, 3);
+      maxLength = numberOrDefault(maxLength, 3);
+
+      var randomWord = Race.inputs.randomWord,
+          randomInt  = Race.inputs.randomInt,
+          words      = [];
+      while (words.length < N) {
+        words.push(randomWord(randomInt(minLength, maxLength)));
+      }
+      return words;
+    },
+
+    /**
+     * Produces a string of N random words.
+     */
+    randomSentence: function(N) {
+      var string = Race.inputs.randomWords(N).join(' ');
+
+      // Capitalize the first letter and add a period at the end.
+      return string.charAt(0).toUpperCase() + string.substring(1) + '.';
+    },
+
+    /**
+     * Produces a string of N random sentences (default: 10).
+     */
+    randomParagraph: function(N) {
+      var randomSentence = Race.inputs.randomSentence,
+          sentences      = [];
+      while (sentences.length < N) {
+        sentences.push(randomSentence(randomInt(3, 20)));
+      }
+      return sentences.join(' ');
+    },
+
+    /**
+     * Produces a convenient set of inputs to pass to a Race for methods that deal with arrays of
+     * integers.
+     */
+    arraysOfIntegers: function(sizes) {
+      var sizingChart = Race.sizingChart(sizes);
+
+      var inputs = [];
+      for (var i = 0; i < sizes.length; ++i) {
+        inputs.push({
+          name: sizingChart[sizes[i]] + ' array',
+          values: [Race.inputs.integers(sizes[i])],
+          size: sizes[i]
+        });
+      }
+
+      return inputs;
+    },
+
+    /**
+     * Produces a convenient set of inputs to pass to a Race for methods that deal with strings.
+     */
+    strings: function(sizes) {
+      var sizingChart = Race.sizingChart(sizes);
+
+      var inputs = [];
+      for (var i = 0; i < sizes.length; ++i) {
+        inputs.push({
+          name: sizingChart[sizes[i]] + ' string',
+          values: [Race.inputs.randomSentence(sizes[i])],
+          size: sizes[i]
+        });
+      }
+
+      return inputs;
     }
-    return integers;
   };
 
-  /**
-   * Formats a number w/ commas as the thousands separator.
-   *
-   * Note: This totally doesn't belong here, but whatever; it's convenient for now.
-   */
-  Race.addCommas = function(number) {
-    var parts  = String(number).split('.'),
-        number = parts.shift(),
-        whole  = [];
+  Race.utils = {
+    /**
+     * Formats a number w/ commas as the thousands separator.
+     *
+     * Note: This totally doesn't belong here, but whatever; it's convenient for now.
+     */
+    addCommas: function(number) {
+      var parts  = String(number).split('.'),
+          number = parts.shift(),
+          whole  = [];
 
-    while (number.length > 3) {
-      whole.unshift(number.substring(number.length - 3));
-      number = number.substring(0, number.length - 3);
+      while (number.length > 3) {
+        whole.unshift(number.substring(number.length - 3));
+        number = number.substring(0, number.length - 3);
+      }
+
+      if (number.length > 0) {
+        whole.unshift(number);
+      }
+
+      var result = whole.join(',');
+
+      if (parts.length > 0) {
+        result += '.' + parts[0];
+      }
+
+      return result;
     }
-
-    if (number.length > 0) {
-      whole.unshift(number);
-    }
-
-    var result = whole.join(',');
-
-    if (parts.length > 0) {
-      result += '.' + parts[0];
-    }
-
-    return result;
   };
 
   /**
@@ -361,6 +489,47 @@
 
         return compareObjects(x, y);
     }
+  };
+
+  /**
+   * Accepts an array of sizes (e.g., [1, 2, 3]) and returns an object mapping each size to a
+   * friendly name (e.g., 'small', 'large', etc.).
+   *
+   * Note: mutates (sorts) the input sizes array.
+   */
+  Race.sizingChart = function(sizes) {
+    var chart = {};
+
+    sizes.sort(function(x, y) {
+      return x - y;
+    });
+
+    if (sizes.length === 2) {
+      chart[sizes[0]] = 'small';
+      chart[sizes[1]] = 'large';
+
+    } else {
+      var smallSize = Math.floor(sizes.length / 2) - 1;
+
+      if (sizes.length % 2 === 0) {
+        smallSize -= 1;
+      }
+
+      chart[sizes[smallSize]] = 'small';
+      chart[sizes[smallSize + 1]] = 'medium';
+      chart[sizes[smallSize + 2]] = 'large';
+
+      for (var i = smallSize - 1, j = smallSize + 3; i >= 0 || j < sizes.length; --i, ++j) {
+        if (i >= 0) {
+          chart[sizes[i]] = 'extra ' + chart[sizes[i + 1]];
+        }
+        if (j < sizes.length) {
+          chart[sizes[j]] = 'extra ' + chart[sizes[j - 1]];
+        }
+      }
+    }
+
+    return chart;
   };
 
   Race.fastApply = function(fn, args) {
@@ -454,6 +623,10 @@
       }
     }
     return cloned;
+  }
+
+  function numberOrDefault(number, defaultValue) {
+    return typeof number === 'number' ? number : defaultValue;
   }
 
   if (typeof module !== 'undefined') {

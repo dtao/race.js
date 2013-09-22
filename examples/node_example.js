@@ -84,7 +84,7 @@ runExamples({
       capitalizeHeaders: true,
       typeFormatters: {
         number: function(value) {
-          return Race.addCommas(value.toFixed(3))
+          return Race.utils.addCommas(value.toFixed(3))
         }
       }
     }));
