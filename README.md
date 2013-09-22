@@ -152,9 +152,10 @@ marathon.start({
   /*
    * All the same callbacks as you can pass to `Race.start()`, PLUS...
    */
-  marathonComplete: function() {
+  marathonComplete: function(results) {
     /*
-     * Run when all races in the marathon have finished.
+     * Here results will be an array of ALL the Race.ResultGroup objects from
+     * all of the races in the marathon.
      */
   }
 });
