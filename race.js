@@ -21,6 +21,7 @@
    */
   Race.prototype.start = function(callbacks) {
     var suite            = new Benchmark.Suite(),
+        description      = this.description,
         impls            = this.implementations,
         inputs           = this.inputs,
         comparer         = this.comparer,
@@ -46,6 +47,7 @@
           fastApply(impl, input.values);
         });
 
+        benchmark.race   = description;
         benchmark.impl   = implName;
         benchmark.input  = input;
         benchmark.output = output;
@@ -70,6 +72,7 @@
       var benchmark = e.target;
 
       var result = new Race.Result({
+        race:  benchmark.race,
         impl:  benchmark.impl,
         input: benchmark.input,
         perf:  benchmark.hz
@@ -81,7 +84,8 @@
       if (Object.keys(currentResults).length === implCount) {
         (function() {
           var resultGroup = new Race.ResultGroup({
-            input: benchmark.input,
+            race:    benchmark.race,
+            input:   benchmark.input,
             results: currentResults
           });
 
@@ -189,6 +193,7 @@
    * @constructor
    */
   Race.Result = function(data) {
+    this.race  = data.race;
     this.impl  = data.impl;
     this.input = data.input;
     this.perf  = data.perf;
@@ -200,6 +205,7 @@
    * @constructor
    */
   Race.ResultGroup = function(data) {
+    this.race    = data.race;
     this.input   = data.input;
     this.results = data.results;
     this.winner  = this.determineWinner();

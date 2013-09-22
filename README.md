@@ -92,6 +92,7 @@ sumRace.start({
      * Here resultGroup will be a Race.ResultGroup object like this:
      *
      * {
+     *   race: 'sumIterative() vs. sumRecursive()',
      *   input: { name: 'Small input', size: 10 },
      *   results: {
      *     'simple': 1000000.0,
@@ -111,6 +112,7 @@ sumRace.start({
      *
      * [
      *   {
+     *     race: 'sumIterative() vs. sumRecursive()',
      *     input: { name: 'Small input', size: 10 },
      *     results: {
      *       'simple': 1000000.0,
@@ -118,6 +120,7 @@ sumRace.start({
      *     }
      *   },
      *   {
+     *     race: 'sumIterative() vs. sumRecursive()',
      *     input: { name: 'Medium input', size: 100 },
      *     results: {
      *       'simple': 500000.0,

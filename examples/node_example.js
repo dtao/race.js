@@ -77,7 +77,7 @@ runExamples({
 
   complete: function(results) {
     lineBreak();
-    console.log('----- RESULTS -----');
+    console.log('----- RESULTS for ' + results[0].race  + ' -----');
     lineBreak();
 
     console.log(stringTable.create(mapResultsToObjects(results), {
