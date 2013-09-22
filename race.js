@@ -43,10 +43,10 @@
           benchmarks = [];
 
       forIn(impls, function(implName, impl) {
-        var output = outputs.add(implName, fastApply(impl, input.values));
+        var output = outputs.add(implName, Race.fastApply(impl, input.values));
 
         var benchmark = new Benchmark(input.name + ' - ' + implName, function() {
-          fastApply(impl, input.values);
+          Race.fastApply(impl, input.values);
         });
 
         benchmark.race   = description;
@@ -361,19 +361,7 @@
     }
   };
 
-  function forEach(collection, fn) {
-    for (var i = 0; i < collection.length; ++i) {
-      fn(collection[i]);
-    }
-  }
-
-  function forIn(object, fn) {
-    for (var key in object) {
-      fn(key, object[key]);
-    }
-  }
-
-  function fastApply(fn, args) {
+  Race.fastApply = function(fn, args) {
     switch (args.length) {
       case 0:
         return fn();
@@ -395,6 +383,18 @@
 
       default:
         return fn.apply(this, args);
+    }
+  };
+
+  function forEach(collection, fn) {
+    for (var i = 0; i < collection.length; ++i) {
+      fn(collection[i]);
+    }
+  }
+
+  function forIn(object, fn) {
+    for (var key in object) {
+      fn(key, object[key]);
     }
   }
 
