@@ -285,12 +285,14 @@
   };
 
   /**
-   * Produces an array of integers from 0 to N.
+   * Produces an array of N integers, starting from a given value (default: 0).
    */
-  Race.integers = function(N) {
+  Race.integers = function(N, start) {
+    start = start || 0;
+
     var integers = [];
-    while (integers.length < N) {
-      integers.push(integers.length);
+    for (var i = 0; i < N; ++i) {
+      integers.push(start + i);
     }
     return integers;
   };
