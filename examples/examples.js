@@ -137,7 +137,7 @@
         }
       },
 
-      inputs: Race.inputs.strings([10, 100, 1000])
+      inputs: Race.inputs.sentences([10, 100, 1000])
     }));
 
     marathon.start(callbacks);

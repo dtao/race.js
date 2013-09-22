@@ -38,7 +38,10 @@ function mapResultsToObjects(results) {
 
   for (var i = 0; i < results.length; ++i) {
     (function(resultGroup) {
-      var object = { input: resultGroup.input.name };
+      var object = {
+        input: resultGroup.input.name,
+        size: resultGroup.input.size
+      };
 
       for (var implName in resultGroup.results) {
         object[implName] = resultGroup.results[implName];
@@ -82,6 +85,11 @@ runExamples({
 
     console.log(stringTable.create(mapResultsToObjects(results), {
       capitalizeHeaders: true,
+      formatters: {
+        size: function(value) {
+          return value;
+        }
+      },
       typeFormatters: {
         number: function(value) {
           return Race.utils.addCommas(value.toFixed(3))

@@ -286,6 +286,65 @@
 
   Race.inputs = {
     /**
+     * Produces a convenient set of inputs to pass to a Race for methods that deal with arrays of
+     * integers.
+     */
+    arraysOfIntegers: function(sizes) {
+      var sizingChart = Race.sizingChart(sizes);
+
+      var inputs = [];
+      for (var i = 0; i < sizes.length; ++i) {
+        inputs.push({
+          name: sizingChart[sizes[i]] + ' array',
+          values: [Race.utils.integers(sizes[i])],
+          size: sizes[i]
+        });
+      }
+
+      return inputs;
+    },
+
+    /**
+     * Produces a convenient set of inputs to pass to a Race for methods that deal with strings
+     * without any whitespace.
+     */
+    strings: function(sizes) {
+      var sizingChart = Race.sizingChart(sizes);
+
+      var inputs = [];
+      for (var i = 0; i < sizes.length; ++i) {
+        inputs.push({
+          name: sizingChart[sizes[i]] + ' string',
+          values: [Race.utils.randomWord(sizes[i])],
+          size: sizes[i]
+        });
+      }
+
+      return inputs;
+    },
+
+    /**
+     * Produces a convenient set of inputs to pass to a Race for methods that deal with strings
+     * comprising multiple words.
+     */
+    sentences: function(sizes) {
+      var sizingChart = Race.sizingChart(sizes);
+
+      var inputs = [];
+      for (var i = 0; i < sizes.length; ++i) {
+        inputs.push({
+          name: sizingChart[sizes[i]] + ' string',
+          values: [Race.utils.randomSentence(sizes[i])],
+          size: sizes[i]
+        });
+      }
+
+      return inputs;
+    }
+  };
+
+  Race.utils = {
+    /**
      * Produces an array of N integers, starting from a given value (default: 0).
      */
     integers: function(N, start) {
@@ -312,7 +371,7 @@
      * Produces an array of N random integers between min and max (defaults: 0 and 100).
      */
     randomIntegers: function(N, min, max) {
-      var randomInt = Race.inputs.randomInt,
+      var randomInt = Race.utils.randomInt,
           integers  = [];
       while (integers.length < N) {
         integers.push(randomInt(min, max));
@@ -329,7 +388,7 @@
         'z'.charCodeAt(0)
       ];
 
-      return String.fromCharCode(Race.inputs.randomInt(charCodeRange[0], charCodeRange[1] + 1));
+      return String.fromCharCode(Race.utils.randomInt(charCodeRange[0], charCodeRange[1] + 1));
     },
 
     /**
@@ -338,7 +397,7 @@
     randomWord: function(len) {
       len = numberOrDefault(len, 10);
 
-      var randomLetter = Race.inputs.randomLetter,
+      var randomLetter = Race.utils.randomLetter,
           word         = '';
       while (word.length < len) {
         word += randomLetter();
@@ -354,8 +413,8 @@
       minLength = numberOrDefault(minLength, 3);
       maxLength = numberOrDefault(maxLength, 3);
 
-      var randomWord = Race.inputs.randomWord,
-          randomInt  = Race.inputs.randomInt,
+      var randomWord = Race.utils.randomWord,
+          randomInt  = Race.utils.randomInt,
           words      = [];
       while (words.length < N) {
         words.push(randomWord(randomInt(minLength, maxLength)));
@@ -367,7 +426,7 @@
      * Produces a string of N random words.
      */
     randomSentence: function(N) {
-      var string = Race.inputs.randomWords(N).join(' ');
+      var string = Race.utils.randomWords(N).join(' ');
 
       // Capitalize the first letter and add a period at the end.
       return string.charAt(0).toUpperCase() + string.substring(1) + '.';
@@ -377,7 +436,7 @@
      * Produces a string of N random sentences (default: 10).
      */
     randomParagraph: function(N) {
-      var randomSentence = Race.inputs.randomSentence,
+      var randomSentence = Race.utils.randomSentence,
           sentences      = [];
       while (sentences.length < N) {
         sentences.push(randomSentence(randomInt(3, 20)));
@@ -385,45 +444,6 @@
       return sentences.join(' ');
     },
 
-    /**
-     * Produces a convenient set of inputs to pass to a Race for methods that deal with arrays of
-     * integers.
-     */
-    arraysOfIntegers: function(sizes) {
-      var sizingChart = Race.sizingChart(sizes);
-
-      var inputs = [];
-      for (var i = 0; i < sizes.length; ++i) {
-        inputs.push({
-          name: sizingChart[sizes[i]] + ' array',
-          values: [Race.inputs.integers(sizes[i])],
-          size: sizes[i]
-        });
-      }
-
-      return inputs;
-    },
-
-    /**
-     * Produces a convenient set of inputs to pass to a Race for methods that deal with strings.
-     */
-    strings: function(sizes) {
-      var sizingChart = Race.sizingChart(sizes);
-
-      var inputs = [];
-      for (var i = 0; i < sizes.length; ++i) {
-        inputs.push({
-          name: sizingChart[sizes[i]] + ' string',
-          values: [Race.inputs.randomSentence(sizes[i])],
-          size: sizes[i]
-        });
-      }
-
-      return inputs;
-    }
-  };
-
-  Race.utils = {
     /**
      * Formats a number w/ commas as the thousands separator.
      *
