@@ -61,23 +61,23 @@ runExamples({
     console.log('Just started race: "' + race.description + '"');
   },
 
-  mismatch: function(outputSet) {
-    lineBreak();
-    console.log('Implementations did not match for "' + outputSet.input.name + '":');
-    lineBreak();
-    console.log(stringTable.create(mapOutputMapToObjects(outputSet.getOutputMap())));
-  },
-
-  result: function(result) {
-  },
-
   group: function(resultGroup) {
     console.log('  * Finished running tests for "' + resultGroup.input.name + '"');
   },
 
+  mismatch: function(outputSet) {
+    console.log('  * Implementations did not match for "' + outputSet.input.name + '":');
+    lineBreak();
+
+    var table = stringTable.create(mapOutputMapToObjects(outputSet.getOutputMap()));
+
+    console.log('    ' + table.replace(/\n/g, '\n    '));
+    lineBreak();
+  },
+
   complete: function(results) {
     lineBreak();
-    console.log('----- RESULTS for ' + results[0].race  + ' -----');
+    console.log('----- RESULTS for "' + results[0].race  + '" -----');
     lineBreak();
 
     console.log(stringTable.create(mapResultsToObjects(results), {

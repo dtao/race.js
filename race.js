@@ -34,6 +34,8 @@
         groupCallback    = callbacks.group    || function() {},
         completeCallback = callbacks.complete || function() {};
 
+    startCallback(this);
+
     forEach(inputs, function(input) {
       input = new Race.Input(input);
 
@@ -103,8 +105,6 @@
     });
 
     suite.run({ async: true });
-
-    startCallback(this);
   };
 
   /**
