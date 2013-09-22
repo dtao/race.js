@@ -1,7 +1,7 @@
 {
   "name": "race.js",
   "description": "Pit JavaScript libraries against each other",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "homepage": "https://github.com/dtao/race.js",
   "author": {
     "name": "Dan Tao",
