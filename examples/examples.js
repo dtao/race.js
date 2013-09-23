@@ -125,15 +125,8 @@
           return count;
         },
 
-        'Using /\\b\\w/.exec in a loop': function(str) {
-          var wordBreak = /\b\w/g,
-              count     = 0;
-
-          while (m = wordBreak.exec(str)) {
-            ++count;
-          }
-
-          return count;
+        'Using /\\b\\w/': function(str) {
+          return str.match(/\b\w/g).length;
         }
       },
 
