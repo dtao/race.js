@@ -286,22 +286,37 @@
 
   Race.inputs = {
     /**
-     * Produces a convenient set of inputs to pass to a Race for methods that deal with arrays of
-     * integers.
+     * Creates a set of inputs to pass to a Race given a generator function.
      */
-    arraysOfIntegers: function(sizes) {
+    create: function(sizes, generator) {
       var sizingChart = Race.sizingChart(sizes);
 
       var inputs = [];
       for (var i = 0; i < sizes.length; ++i) {
         inputs.push({
-          name: sizingChart[sizes[i]] + ' array',
-          values: [Race.utils.integers(sizes[i])],
+          name: sizingChart[sizes[i]] + ' ' + generator.inputType,
+          values: [generator(sizes[i])],
           size: sizes[i]
         });
       }
 
       return inputs;
+    },
+
+    /**
+     * Produces a convenient set of inputs to pass to a Race for methods that deal with arrays of
+     * integers. Each array of size N will contain the integers from 0 to N - 1.
+     */
+    arraysOfIntegers: function(sizes) {
+      return Race.inputs.create(sizes, Race.utils.integers);
+    },
+
+    /**
+     * Produces a convenient set of inputs to pass to a Race for methods that deal with arrays of
+     * integers. Each array of size N will contain N random integers between 0 and N - 1.
+     */
+    arraysOfRandomIntegers: function(sizes) {
+      return Race.inputs.create(sizes, Race.utils.randomIntegers);
     },
 
     /**
@@ -309,18 +324,15 @@
      * without any whitespace.
      */
     strings: function(sizes) {
-      var sizingChart = Race.sizingChart(sizes);
+      return Race.inputs.create(sizes, Race.utils.randomWord);
+    },
 
-      var inputs = [];
-      for (var i = 0; i < sizes.length; ++i) {
-        inputs.push({
-          name: sizingChart[sizes[i]] + ' string',
-          values: [Race.utils.randomWord(sizes[i])],
-          size: sizes[i]
-        });
-      }
-
-      return inputs;
+    /**
+     * Produces a convenient set of inputs to pass to a Race for methods that deal with arrays of
+     * strings without any whitespace.
+     */
+    arraysOfStrings: function(sizes) {
+      return Race.inputs.create(sizes, Race.utils.randomWords);
     },
 
     /**
@@ -328,18 +340,7 @@
      * comprising multiple words.
      */
     sentences: function(sizes) {
-      var sizingChart = Race.sizingChart(sizes);
-
-      var inputs = [];
-      for (var i = 0; i < sizes.length; ++i) {
-        inputs.push({
-          name: sizingChart[sizes[i]] + ' string',
-          values: [Race.utils.randomSentence(sizes[i])],
-          size: sizes[i]
-        });
-      }
-
-      return inputs;
+      return Race.inputs.create(sizes, Race.utils.randomSentence);
     }
   };
 
@@ -472,6 +473,13 @@
       return result;
     }
   };
+
+  Race.utils.integers.inputType = 'array';
+  Race.utils.randomIntegers.inputType = 'array';
+  Race.utils.randomWord.inputType = 'string';
+  Race.utils.randomWords.inputType = 'array';
+  Race.utils.randomSentence.inputType = 'string';
+  Race.utils.randomParagraph.inputType = 'string';
 
   /**
    * The default comparison method used to verify outputs from different implementations.
