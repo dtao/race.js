@@ -533,8 +533,8 @@
     });
 
     if (sizes.length === 2) {
-      chart[sizes[0]] = 'small';
-      chart[sizes[1]] = 'large';
+      chart[firstValue(sizes[0])] = 'small';
+      chart[firstValue(sizes[1])] = 'large';
 
     } else {
       var smallSize = Math.floor(sizes.length / 2) - 1;
@@ -543,16 +543,16 @@
         smallSize -= 1;
       }
 
-      chart[sizes[smallSize]] = 'small';
-      chart[sizes[smallSize + 1]] = 'medium';
-      chart[sizes[smallSize + 2]] = 'large';
+      chart[firstValue(sizes[smallSize])] = 'small';
+      chart[firstValue(sizes[smallSize + 1])] = 'medium';
+      chart[firstValue(sizes[smallSize + 2])] = 'large';
 
       for (var i = smallSize - 1, j = smallSize + 3; i >= 0 || j < sizes.length; --i, ++j) {
         if (i >= 0) {
-          chart[sizes[i]] = 'extra ' + chart[sizes[i + 1]];
+          chart[firstValue(sizes[i])] = 'extra ' + chart[firstValue(sizes[i + 1])];
         }
         if (j < sizes.length) {
-          chart[sizes[j]] = 'extra ' + chart[sizes[j - 1]];
+          chart[firstValue(sizes[j])] = 'extra ' + chart[firstValue(sizes[j - 1])];
         }
       }
     }
@@ -595,6 +595,14 @@
     for (var key in object) {
       fn(key, object[key]);
     }
+  }
+
+  function firstValue(value) {
+    if (!(value instanceof Array)) {
+      return value;
+    }
+
+    return value[0];
   }
 
   function compareArrays(arr1, arr2) {

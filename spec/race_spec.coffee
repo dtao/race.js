@@ -64,6 +64,12 @@ describe 'Race', ->
         2: 'medium'
         3: 'large'
 
+    it 'assigns size names in the appropriate order', ->
+      expect(Race.sizingChart([100, 50, 200])).toEqual
+        50: 'small'
+        100: 'medium'
+        200: 'large'
+
     describe 'for only two sizes', ->
       it 'assigns the names "small" and "large"', ->
         expect(Race.sizingChart([1, 2])).toEqual
@@ -98,8 +104,8 @@ describe 'Race', ->
           6: 'extra large'
           7: 'extra extra large'
 
-    it 'assigns size names in the appropriate order', ->
-      expect(Race.sizingChart([100, 50, 200])).toEqual
-        50: 'small'
-        100: 'medium'
-        200: 'large'
+    describe 'for jagged arrays', ->
+      it 'uses the first value in the array as the size', ->
+        expect(Race.sizingChart([[10, 20], [30, 40]])).toEqual
+          10: 'small'
+          30: 'large'
