@@ -289,18 +289,36 @@
      * Creates a set of inputs to pass to a Race given a generator function.
      */
     create: function(sizes, generator) {
+      if (!sizes || !sizes.length) {
+        throw 'Passed a non-array or empty array to Race.inputs.create.';
+      }
+
       var sizingChart = Race.sizingChart(sizes);
 
       var inputs = [];
-      for (var i = 0; i < sizes.length; ++i) {
+      forEach(sizes, function(size) {
+        var innerSizes = size instanceof Array ? size : [size];
+
         inputs.push({
-          name: sizingChart[sizes[i]] + ' ' + generator.inputType,
-          values: [generator(sizes[i])],
-          size: sizes[i]
+          name: sizingChart[firstValue(size)] + ' ' + generator.inputType,
+          values: Race.inputs.createValues(generator, innerSizes),
+          size: firstValue(size)
         });
-      }
+      });
 
       return inputs;
+    },
+
+    /**
+     * Creates the arguments to pass an implementation in a Race given a
+     * generator function and a collection of array sizes for one input.
+     */
+    createValues: function(generator, sizes) {
+      var values = [];
+      forEach(sizes, function(size) {
+        values.push(generator(size));
+      });
+      return values;
     },
 
     /**

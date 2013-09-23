@@ -140,6 +140,32 @@
       inputs: Race.inputs.sentences([10, 100, 1000])
     }));
 
+    marathon.add(new Race({
+      description: 'Comparing the contents of two arrays',
+
+      impls: {
+        'Inspecting each element one by one': function(arr1, arr2) {
+          if (arr1.length !== arr2.length) {
+            return false;
+          }
+
+          for (var i = 0; i < arr1.length; ++i) {
+            if (arr2[i] !== arr1[i]) {
+              return false;
+            }
+          }
+
+          return true;
+        },
+
+        'Calling join() and comparing the resulting strings': function(arr1, arr2) {
+          return arr1.join(',') === arr2.join(',');
+        }
+      },
+
+      inputs: Race.inputs.arraysOfIntegers([[10, 10], [100, 100]])
+    }));
+
     marathon.start(callbacks);
 
     return marathon;
