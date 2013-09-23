@@ -407,7 +407,7 @@
         'z'.charCodeAt(0)
       ];
 
-      return String.fromCharCode(Race.utils.randomInt(charCodeRange[0], charCodeRange[1] + 1));
+      return String.fromCharCode(Race.utils.randomInt(charCodeRange[0], charCodeRange[1]));
     },
 
     /**
